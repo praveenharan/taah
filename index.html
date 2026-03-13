@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Learning Flashcards</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .week-container { margin-bottom: 20px; width: 100%; max-width: 600px; }
+        .card { 
+            background: #f4f4f4; border: 1px solid #ccc; padding: 20px; margin: 5px; 
+            cursor: pointer; border-radius: 8px; transition: 0.3s;
+        }
+        .card:hover { background: #e0e0e0; }
+        .answer { display: none; margin-top: 10px; color: #333; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>Study Plan: 7-Week Flashcards</h1>
+    <div id="flashcard-app"></div>
+
+    <script>
+        const studyPlan = {
+            "Week 1": ["Day 1 Topic", "Day 2 Topic", "Day 3 Topic", "Day 4 Topic", "Day 5 Topic", "Day 6 Topic", "Day 7 Topic"],
+            "Week 2": ["Day 8 Topic", "Day 9 Topic", "Day 10 Topic", "Day 11 Topic", "Day 12 Topic", "Day 13 Topic", "Day 14 Topic"]
+            // Add weeks 3-7 here following the same structure
+        };
+
+        const app = document.getElementById('flashcard-app');
+
+        for (const week in studyPlan) {
+            let section = document.createElement('div');
+            section.className = 'week-container';
+            section.innerHTML = `<h2>${week}</h2>`;
+            
+            studyPlan[week].forEach((day, index) => {
+                let card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `${day} <div class="answer" id="ans-${week}-${index}">Answer/Concept Details here</div>`;
+                card.onclick = () => {
+                    let ans = document.getElementById(`ans-${week}-${index}`);
+                    ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+                };
+                section.appendChild(card);
+            });
+            app.appendChild(section);
+        }
+    </script>
+</body>
+</html>
