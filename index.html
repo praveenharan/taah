@@ -4,39 +4,49 @@
     <meta charset="UTF-8">
     <title>Azure Data Engineering Study Center</title>
     <style>
-        body { display: flex; font-family: sans-serif; margin: 0; height: 100vh; }
+        body { display: flex; font-family: sans-serif; margin: 0; height: 100vh; background: #f4f7f6; }
         #sidebar { width: 250px; background: #2c3e50; color: white; padding: 20px; overflow-y: auto; }
-        .week-title { cursor: pointer; padding: 10px; font-weight: bold; }
-        .day-item { padding: 5px 20px; cursor: pointer; color: #bdc3c7; }
-        .day-item:hover { color: white; }
+        .week-title { padding: 10px; font-weight: bold; border-bottom: 1px solid #34495e; margin-top: 10px; }
+        .day-item { padding: 8px 20px; cursor: pointer; color: #bdc3c7; transition: 0.2s; }
+        .day-item:hover { color: white; background: #34495e; }
         
-        #content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f7f6; }
+        #content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .flashcard { 
-            width: 400px; height: 250px; background: white; border: 2px solid #3498db;
+            width: 500px; height: 300px; background: white; border: 2px solid #3498db;
             display: flex; align-items: center; justify-content: center; text-align: center;
-            cursor: pointer; border-radius: 15px; font-size: 1.2rem; padding: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer; border-radius: 15px; font-size: 1.5rem; padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 20px;
         }
+        .controls { display: flex; gap: 20px; }
+        button { padding: 10px 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="sidebar"></div>
 <div id="content">
-    <h2 id="status">Select a Day to Begin</h2>
+    <h2 id="status">Select a Day from the Sidebar</h2>
     <div id="card-area"></div>
+    <div class="controls">
+        <button onclick="changeCard(-1)">Previous</button>
+        <button onclick="changeCard(1)">Next</button>
+    </div>
 </div>
 
 <script>
-    // Structure: 7 Weeks, 7 Days each, 20 Cards per day
-    const flashcardData = {
-        "Week 1": {
-            "Day 1": Array.from({length: 20}, (_, i) => ({q: `Q${i+1}: Storage Concept`, a: `Answer for Q${i+1}`}))
+    // Mock Data Generator for the 7-week plan
+    const flashcardData = {};
+    for(let w=1; w<=7; w++) {
+        flashcardData[`Week ${w}`] = {};
+        for(let d=1; d<=7; d++) {
+            flashcardData[`Week ${w}`][`Day ${d}`] = Array.from({length: 20}, (_, i) => ({
+                q: `Week ${w} Day ${d} - Question ${i+1}`, 
+                a: `Answer for Week ${w} Day ${d} - Card ${i+1}`
+            }));
         }
-        // Repeat this structure for all weeks and days
-    };
+    }
 
-    let currentCards = [];
+    let selectedW = "Week 1", selectedD = "Day 1";
     let currentIndex = 0;
     let showingAnswer = false;
 
@@ -46,28 +56,25 @@
 
     // Build Menu
     for(let w=1; w<=7; w++) {
-        let week = `Week ${w}`;
-        sidebar.innerHTML += `<div class="week-title">${week}</div>`;
+        sidebar.innerHTML += `<div class="week-title">Week ${w}</div>`;
         for(let d=1; d<=7; d++) {
-            let day = `Day ${d}`;
             let el = document.createElement('div');
             el.className = 'day-item';
-            el.innerText = day;
-            el.onclick = () => loadDay(week, day);
+            el.innerText = `Day ${d}`;
+            el.onclick = () => loadDay(`Week ${w}`, `Day ${d}`);
             sidebar.appendChild(el);
         }
     }
 
     function loadDay(w, d) {
-        currentCards = flashcardData[w]?.[d] || [{q: "No cards yet", a: "Add data to JS"}];
-        currentIndex = 0;
-        showingAnswer = false;
+        selectedW = w; selectedD = d;
+        currentIndex = 0; showingAnswer = false;
         status.innerText = `${w} - ${d}`;
         renderCard();
     }
 
     function renderCard() {
-        let card = currentCards[currentIndex];
+        let card = flashcardData[selectedW][selectedD][currentIndex];
         cardArea.innerHTML = `<div class="flashcard" onclick="flipCard()">
             ${showingAnswer ? card.a : card.q}
         </div>`;
@@ -75,6 +82,12 @@
 
     function flipCard() {
         showingAnswer = !showingAnswer;
+        renderCard();
+    }
+
+    function changeCard(dir) {
+        currentIndex = (currentIndex + dir + 20) % 20;
+        showingAnswer = false;
         renderCard();
     }
 </script>
