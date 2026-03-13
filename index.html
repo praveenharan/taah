@@ -35,6 +35,21 @@
 </div>
 
 <script>
+    // Add this line inside the renderCard function or near the top
+    function renderCard() {
+        let cards = flashcardData[currentW][currentD];
+        let card = cards[currentIndex];
+        
+        // Update the display to show: Question X/20
+        cardDisplay.innerHTML = `
+            <div style="margin-bottom: 10px; font-weight: bold;">
+                Question ${currentIndex + 1} / ${cards.length}
+            </div>
+            <div class="flashcard" onclick="flip()">
+                ${isFlipped ? card.a : card.q}
+            </div>
+        `;
+    }
     // Data Structure: 7 Weeks, 7 Days, 20 Cards each
     const flashcardData = {
         "Week 1": {
