@@ -2,94 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Azure Data Engineering Study Center</title>
+    <title>Study Dashboard</title>
     <style>
-        body { display: flex; font-family: sans-serif; margin: 0; height: 100vh; background: #f4f7f6; }
-        #sidebar { width: 250px; background: #2c3e50; color: white; padding: 20px; overflow-y: auto; }
-        .week-title { padding: 10px; font-weight: bold; border-bottom: 1px solid #34495e; margin-top: 10px; }
-        .day-item { padding: 8px 20px; cursor: pointer; color: #bdc3c7; transition: 0.2s; }
-        .day-item:hover { color: white; background: #34495e; }
+        body { display: flex; font-family: sans-serif; margin: 0; }
+        /* Sidebar Navigation */
+        #sidebar { width: 200px; height: 100vh; background: #333; color: white; padding: 20px; }
+        .nav-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #555; }
+        .nav-item:hover { background: #444; }
         
-        #content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .flashcard { 
-            width: 500px; height: 300px; background: white; border: 2px solid #3498db;
-            display: flex; align-items: center; justify-content: center; text-align: center;
-            cursor: pointer; border-radius: 15px; font-size: 1.5rem; padding: 30px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 20px;
+        /* Main Content Area */
+        #content { flex-grow: 1; padding: 40px; }
+        .week-section { display: none; }
+        .week-section.active { display: block; }
+        
+        .card { 
+            background: #f9f9f9; border: 1px solid #ddd; padding: 20px; 
+            margin: 10px 0; border-radius: 8px; cursor: pointer;
         }
-        .controls { display: flex; gap: 20px; }
-        button { padding: 10px 20px; cursor: pointer; }
+        .answer { display: none; margin-top: 10px; color: #007bff; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="sidebar"></div>
-<div id="content">
-    <h2 id="status">Select a Day from the Sidebar</h2>
-    <div id="card-area"></div>
-    <div class="controls">
-        <button onclick="changeCard(-1)">Previous</button>
-        <button onclick="changeCard(1)">Next</button>
+    <div id="sidebar">
+        <h3>Weeks</h3>
+        <div id="menu"></div>
     </div>
-</div>
 
-<script>
-    // Mock Data Generator for the 7-week plan
-    const flashcardData = {};
-    for(let w=1; w<=7; w++) {
-        flashcardData[`Week ${w}`] = {};
-        for(let d=1; d<=7; d++) {
-            flashcardData[`Week ${w}`][`Day ${d}`] = Array.from({length: 20}, (_, i) => ({
-                q: `Week ${w} Day ${d} - Question ${i+1}`, 
-                a: `Answer for Week ${w} Day ${d} - Card ${i+1}`
-            }));
+    <div id="content">
+        <h1 id="current-title">Select a Week</h1>
+        <div id="flashcards"></div>
+    </div>
+
+    <script>
+        const studyPlan = {
+            "Week 1": ["Day 1 Topic", "Day 2 Topic", "Day 3 Topic", "Day 4 Topic", "Day 5 Topic", "Day 6 Topic", "Day 7 Topic"],
+            "Week 2": ["Day 8 Topic", "Day 9 Topic", "Day 10 Topic", "Day 11 Topic", "Day 12 Topic", "Day 13 Topic", "Day 14 Topic"]
+            // Add Weeks 3-7 here...
+        };
+
+        const menu = document.getElementById('menu');
+        const flashcards = document.getElementById('flashcards');
+        const title = document.getElementById('current-title');
+
+        for (const week in studyPlan) {
+            // Create Sidebar Link
+            let link = document.createElement('div');
+            link.className = 'nav-item';
+            link.innerText = week;
+            link.onclick = () => showWeek(week);
+            menu.appendChild(link);
         }
-    }
 
-    let selectedW = "Week 1", selectedD = "Day 1";
-    let currentIndex = 0;
-    let showingAnswer = false;
-
-    const sidebar = document.getElementById('sidebar');
-    const cardArea = document.getElementById('card-area');
-    const status = document.getElementById('status');
-
-    // Build Menu
-    for(let w=1; w<=7; w++) {
-        sidebar.innerHTML += `<div class="week-title">Week ${w}</div>`;
-        for(let d=1; d<=7; d++) {
-            let el = document.createElement('div');
-            el.className = 'day-item';
-            el.innerText = `Day ${d}`;
-            el.onclick = () => loadDay(`Week ${w}`, `Day ${d}`);
-            sidebar.appendChild(el);
+        function showWeek(week) {
+            title.innerText = week;
+            flashcards.innerHTML = '';
+            studyPlan[week].forEach((day, index) => {
+                let card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `${day} <div class="answer" id="ans-${index}">Answer details here...</div>`;
+                card.onclick = () => {
+                    let ans = card.querySelector('.answer');
+                    ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+                };
+                flashcards.appendChild(card);
+            });
         }
-    }
-
-    function loadDay(w, d) {
-        selectedW = w; selectedD = d;
-        currentIndex = 0; showingAnswer = false;
-        status.innerText = `${w} - ${d}`;
-        renderCard();
-    }
-
-    function renderCard() {
-        let card = flashcardData[selectedW][selectedD][currentIndex];
-        cardArea.innerHTML = `<div class="flashcard" onclick="flipCard()">
-            ${showingAnswer ? card.a : card.q}
-        </div>`;
-    }
-
-    function flipCard() {
-        showingAnswer = !showingAnswer;
-        renderCard();
-    }
-
-    function changeCard(dir) {
-        currentIndex = (currentIndex + dir + 20) % 20;
-        showingAnswer = false;
-        renderCard();
-    }
-</script>
+    </script>
 </body>
 </html>
