@@ -36,16 +36,18 @@
 
 <script>
     // Data Structure: 7 Weeks, 7 Days, 20 Cards each
-    const flashcardData = {};
-    for(let w=1; w<=7; w++) {
-        flashcardData[`Week ${w}`] = {};
-        for(let d=1; d<=7; d++) {
-            flashcardData[`Week ${w}`][`Day ${d}`] = Array.from({length: 20}, (_, i) => ({
-                q: `W${w}-D${d}: Question ${i+1}`, 
-                a: `W${w}-D${d}: Answer ${i+1}`
-            }));
+    const flashcardData = {
+        "Week 1": {
+            "Day 1": [
+                { q: "What is Microsoft Fabric?", a: "An all-in-one analytics solution..." },
+                { q: "Next Question...", a: "Next Answer..." },
+                // Add up to 20 objects here...
+            ],
+            "Day 2": [
+                 // Add Day 2 questions here...
+            ]
         }
-    }
+    };
 
     let currentW, currentD, currentIndex = 0, isFlipped = false;
 
