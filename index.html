@@ -49,7 +49,7 @@
                 // Add up to 20 objects here...
             ],
             "Day 3": [
-                { q: "What is?", a: "An all },
+                { q: "What is Fabric?", a: "BIG..." },
                 { q: "Next Question...", a: "Next Answer..." },
                 // Add up to 20 objects here...
             ],
@@ -85,6 +85,7 @@
     // Build Accordion
     for (let w = 1; w <= 7; w++) {
         let week = `Week ${w}`;
+        if (!flashcardData[week]) continue; 
         let header = document.createElement('div');
         header.className = 'week-header';
         header.innerText = week;
