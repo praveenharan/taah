@@ -4,70 +4,57 @@
     <meta charset="UTF-8">
     <title>Study Dashboard</title>
     <style>
-        body { display: flex; font-family: sans-serif; margin: 0; }
-        /* Sidebar Navigation */
-        #sidebar { width: 200px; height: 100vh; background: #333; color: white; padding: 20px; }
-        .nav-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #555; }
-        .nav-item:hover { background: #444; }
+        body { display: flex; font-family: sans-serif; margin: 0; height: 100vh; }
+        #sidebar { width: 250px; background: #2c3e50; color: white; overflow-y: auto; }
+        .week-header { padding: 15px; cursor: pointer; border-bottom: 1px solid #34495e; font-weight: bold; background: #34495e; }
+        .week-header:hover { background: #3d566e; }
+        .days-container { display: none; background: #34495e; }
+        .days-container.active { display: block; }
+        .day-item { padding: 10px 30px; cursor: pointer; border-bottom: 1px solid #2c3e50; }
+        .day-item:hover { background: #4e6a85; }
         
-        /* Main Content Area */
-        #content { flex-grow: 1; padding: 40px; }
-        .week-section { display: none; }
-        .week-section.active { display: block; }
-        
-        .card { 
-            background: #f9f9f9; border: 1px solid #ddd; padding: 20px; 
-            margin: 10px 0; border-radius: 8px; cursor: pointer;
-        }
-        .answer { display: none; margin-top: 10px; color: #007bff; font-weight: bold; }
+        #content { flex-grow: 1; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        .flashcard { width: 500px; padding: 40px; border: 2px solid #3498db; border-radius: 10px; cursor: pointer; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div id="sidebar">
-        <h3>Weeks</h3>
-        <div id="menu"></div>
-    </div>
+<div id="sidebar"></div>
+<div id="content">
+    <h2 id="display-area">Select a Week and Day</h2>
+</div>
 
-    <div id="content">
-        <h1 id="current-title">Select a Week</h1>
-        <div id="flashcards"></div>
-    </div>
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const displayArea = document.getElementById('display-area');
 
-    <script>
-        const studyPlan = {
-            "Week 1": ["Day 1 Topic", "Day 2 Topic", "Day 3 Topic", "Day 4 Topic", "Day 5 Topic", "Day 6 Topic", "Day 7 Topic"],
-            "Week 2": ["Day 8 Topic", "Day 9 Topic", "Day 10 Topic", "Day 11 Topic", "Day 12 Topic", "Day 13 Topic", "Day 14 Topic"]
-            // Add Weeks 3-7 here...
+    for (let w = 1; w <= 7; w++) {
+        // Create Week Header
+        let weekDiv = document.createElement('div');
+        weekDiv.className = 'week-header';
+        weekDiv.innerText = `Week ${w}`;
+        
+        // Create Days Container
+        let daysDiv = document.createElement('div');
+        daysDiv.className = 'days-container';
+        
+        for (let d = 1; d <= 7; d++) {
+            let dayItem = document.createElement('div');
+            dayItem.className = 'day-item';
+            dayItem.innerText = `Day ${d}`;
+            dayItem.onclick = () => displayArea.innerHTML = `<h1>Week ${w} - Day ${d}</h1><div class="flashcard">20 Flashcards will appear here</div>`;
+            daysDiv.appendChild(dayItem);
+        }
+
+        // Accordion Logic
+        weekDiv.onclick = () => {
+            document.querySelectorAll('.days-container').forEach(el => el.classList.remove('active'));
+            daysDiv.classList.add('active');
         };
 
-        const menu = document.getElementById('menu');
-        const flashcards = document.getElementById('flashcards');
-        const title = document.getElementById('current-title');
-
-        for (const week in studyPlan) {
-            // Create Sidebar Link
-            let link = document.createElement('div');
-            link.className = 'nav-item';
-            link.innerText = week;
-            link.onclick = () => showWeek(week);
-            menu.appendChild(link);
-        }
-
-        function showWeek(week) {
-            title.innerText = week;
-            flashcards.innerHTML = '';
-            studyPlan[week].forEach((day, index) => {
-                let card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `${day} <div class="answer" id="ans-${index}">Answer details here...</div>`;
-                card.onclick = () => {
-                    let ans = card.querySelector('.answer');
-                    ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
-                };
-                flashcards.appendChild(card);
-            });
-        }
-    </script>
+        sidebar.appendChild(weekDiv);
+        sidebar.appendChild(daysDiv);
+    }
+</script>
 </body>
 </html>
