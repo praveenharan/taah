@@ -50,21 +50,7 @@
 </div>
 
 <script>
-    // Add this line inside the renderCard function or near the top
-    function renderCard() {
-        let cards = flashcardData[currentW][currentD];
-        let card = cards[currentIndex];
-        
-        // Update the display to show: Question X/20
-        cardDisplay.innerHTML = `
-            <div style="margin-bottom: 10px; font-weight: bold;">
-                Question ${currentIndex + 1} / ${cards.length}
-            </div>
-            <div class="flashcard" onclick="flip()">
-                ${isFlipped ? card.a : card.q}
-            </div>
-        `;
-    }
+    
     // Data Structure: 7 Weeks, 7 Days, 20 Cards each
     const flashcardData = {
         "Week 1": {
@@ -210,11 +196,27 @@
 
     function flip() { isFlipped = !isFlipped; renderCard(); }
 
-    function changeCard(dir) {
-        currentIndex = (currentIndex + dir + 20) % 20;
-        isFlipped = false;
-        renderCard();
-    }
+    function renderCard() {
+    const cards = flashcardData[currentW][currentD];
+    const card = cards[currentIndex];
+    
+    cardDisplay.innerHTML = `
+        <div style="margin-bottom: 10px; font-weight: bold;">
+            Question ${currentIndex + 1} / ${cards.length}
+        </div>
+        <div class="flashcard" onclick="flip()">
+            ${isFlipped ? card.a : card.q}
+        </div>
+    `;
+}
+
+function changeCard(dir) {
+    const cards = flashcardData[currentW][currentD];
+    // Uses the actual length of the array instead of a hardcoded 20
+    currentIndex = (currentIndex + dir + cards.length) % cards.length;
+    isFlipped = false;
+    renderCard();
+}
 </script>
 </body>
 </html>
